@@ -27,7 +27,7 @@ module Sinatra
 
       get '/users/:id' do
         login_required
-
+        redirect "/" unless current_user.admin?
         @user = User.get(:id => params[:id])
         haml get_view_as_string("show.haml"), :layout => use_layout?
       end
@@ -67,10 +67,14 @@ module Sinatra
       end
 
       get '/signup' do
+        login_required
+        redirect "/" unless current_user.admin?
         haml get_view_as_string("signup.haml"), :layout => use_layout?
       end
 
       post '/signup' do
+        login_required
+        redirect "/" unless current_user.admin?
         @user = User.set(params[:user])
         if @user
           session[:user] = @user.id
@@ -79,6 +83,7 @@ module Sinatra
           session[:flash] = "failure!"
           redirect '/'
         end
+
       end
 
       get '/users/:id/edit' do
